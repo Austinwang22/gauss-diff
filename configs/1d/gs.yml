@@ -1,0 +1,40 @@
+data:
+  dim: 1
+  num_samples: 512
+  mean: [1.0,]
+  std: [0.1, ]
+
+model: 
+  sde: VE
+  layers: [2, 128, 128, 128, 1]
+  act: lrelu
+  beta_min: 0.1
+  beta_max: 20.
+  num_scales: 1000
+  sampling_eps: 0.001
+
+train:
+  batchsize: 128
+  num_epoch: 10001
+  continuous: True
+  save_step: 2000
+  eval_step: 0
+
+optim:
+  lr: 0.0005
+  warmup: 5000
+  grad_clip: 1.
+
+sampling:
+  method: 'pc'
+  predictor: 'euler_maruyama'
+  corrector: 'none'
+  snr: 0.16
+  n_steps_each: 1
+  noise_removal: True
+  probability_flow: False
+  eps: 0.0001
+
+
+log:
+  basedir: train-g1d-256-xl

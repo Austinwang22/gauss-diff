@@ -1,0 +1,39 @@
+data:
+  dim: 2
+  num_samples: 8196
+  mean: [4.0, 4.0]
+  std: [0.1, 0.1]
+
+model: 
+  layers: [3, 128, 128, 128, 128, 2]
+  act: lrelu
+  beta_min: 0.1
+  beta_max: 20.
+  num_scales: 1000
+  sampling_eps: 0.001
+
+train:
+  batchsize: 128
+  num_epoch: 10001
+  continuous: True
+  save_step: 2000
+  eval_step: 2000
+
+optim:
+  lr: 0.0005
+  warmup: 5000
+  grad_clip: 1.
+
+sampling:
+  method: 'pc'
+  predictor: 'euler_maruyama'
+  corrector: 'none'
+  snr: 0.16
+  n_steps_each: 1
+  noise_removal: True
+  probability_flow: False
+  eps: 0.00001
+
+
+log:
+  basedir: train-8196-l
