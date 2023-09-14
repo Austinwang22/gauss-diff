@@ -55,7 +55,7 @@ def pCN_sample(N, burn_in, sample_fn, device, model, start_x, y, H, std_y, beta)
 
         pbar.set_description(
             (
-                f'Iteration: {i}. Acceptance probability: {accept}'
+                f'Iteration: {i}. Acceptance probability: {accept[0]}'
             )
         )
 
@@ -95,6 +95,8 @@ def subprocess(args):
     num_samples = config.sampling.num_samples
     sample_shape = (num_samples, config.data.dim)
 
+    latents = torch.randn((config.data.num_samples, config.data.dim), device='cpu')
+
     def scaler(x):
         return x
 
@@ -106,7 +108,7 @@ def subprocess(args):
     N = config.sampling.N
     burn_in = config.sampling.burn_in
 
-    measurement = y[4000]
+    measurement = y[7000]
 
     print('Using measurement y = {}'.format(measurement))
 
@@ -132,8 +134,9 @@ def subprocess(args):
     plt.close()
 
     plt.figure()
-    plt.scatter(noisy_posterior.cpu()[:, 0], noisy_posterior.cpu()[:, 1])
-    plt.title('Noisy Posterior Latents')
+    plt.scatter(latents[:, 0], latents[:, 1], c='blue')
+    plt.scatter(noisy_posterior.cpu()[:, 0], noisy_posterior.cpu()[:, 1], c='red')
+    plt.title('Noisy Posterior Latents (Red) and Diffusion Sampling Prior (Blue)')
     plt.savefig(np_fig_path)
     plt.close()
 

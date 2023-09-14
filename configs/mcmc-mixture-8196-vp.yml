@@ -5,6 +5,7 @@ data:
   x_path: 'exp/mcmc-mixture-8196-vp/x.pt'
   H: [1., 1.]
   std_y: 0.1
+  num_samples: 8196
   type: 'mixture'
 
 model: 
@@ -24,11 +25,6 @@ train:
   save_step: 50
   eval_step: 50
 
-optim:
-  lr: 0.0005
-  warmup: 5000
-  grad_clip: 1.
-
 sampling:
   method: 'pc'
   predictor: 'euler_maruyama'
@@ -40,8 +36,8 @@ sampling:
   eps: 0.001
   num_samples: 1
   beta: 0.1
-  N: 400
-  burn_in: 300
+  N: 200
+  burn_in: 100
 
 
 log:
