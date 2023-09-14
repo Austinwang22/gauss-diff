@@ -91,7 +91,7 @@ class SDE(abc.ABC):
                 drift = drift - diffusion[:, None] ** 2 * \
                     score * (0.5 if self.probability_flow else 1.)
                 # Set the diffusion function to zero for ODEs.
-                diffusion = 0. if self.probability_flow else diffusion
+                diffusion = torch.zeros_like(diffusion) if self.probability_flow else diffusion
                 return drift, diffusion
 
             def discretize(self, x, t):

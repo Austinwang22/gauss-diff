@@ -33,7 +33,7 @@ sampling:
   snr: 0.16
   n_steps_each: 1
   noise_removal: True
-  probability_flow: True
+  probability_flow: False
   eps: 0.001
   num_samples: 8196
 
