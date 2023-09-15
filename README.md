@@ -14,5 +14,5 @@ Example (Samples from model):
 Given prior distribution on data **x** and forward operator **H** and measurement data _y_ = **Hx** + _z_, 
 where _z_ is Gaussian noise, we compute samples from the posterior distribution _p_(**x** | __y__).
 
-![Alt text](images/mcmc-mixture-3mode-vp/figs/post_prior.png)
+![Alt text](images/mcmc-mixture-3mode-vp/post_prior.png)
 
