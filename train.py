@@ -135,6 +135,8 @@ def subprocess(args):
         model.load_state_dict(torch.load(ckpt))
         print('Loading preset weights...')
 
+    torch.save(dataset.data, 'exp/mcmc-mixture-3mode-vp/x.pt')
+
     train_fn(model, trainloader, optimizer, config, device)
 
 

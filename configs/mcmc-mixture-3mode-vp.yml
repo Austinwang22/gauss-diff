@@ -1,12 +1,12 @@
 data:
   dim: 2
-  mean: [[4.0, 4.0], [-4.0, 4.0], [0., 2.0], [5.0, 5.0]]
+  mean: [[4.0, 4.0], [-4.0, 4.0], [0., 0.]]
   std: [[0.1, 0.], [0., 0.1]]
-  x_path: 'exp/mcmc-mixture-8196-vp/x.pt'
+  x_path: 'exp/mcmc-mixture-3mode-vp/x.pt'
   H: [1., 1.]
   std_y: 0.1
   num_samples: 8196
-  y_index: 0
+  y_index: 5000
   type: 'mixture'
 
 model: 
@@ -17,7 +17,7 @@ model:
   beta_max: 20.
   num_scales: 1000
   sampling_eps: 0.001
-  ckpt_path: 'exp/mixture-8196-vp/ckpts/model-400.pt'
+  ckpt_path: 'exp/mixture-3mode-vp/ckpts/model-400.pt'
 
 train:
   batchsize: 128
@@ -36,10 +36,10 @@ sampling:
   probability_flow: True
   eps: 0.001
   num_samples: 1
-  beta: 0.1
-  N: 200
+  beta: 0.85
+  N: 350
   burn_in: 100
 
 
 log:
-  basedir: mcmc-mixture-8196-vp
+  basedir: mcmc-mixture-3mode-vp

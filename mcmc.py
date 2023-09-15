@@ -108,7 +108,7 @@ def subprocess(args):
     N = config.sampling.N
     burn_in = config.sampling.burn_in
 
-    measurement = y[7000]
+    measurement = y[config.data.y_index]
 
     print('Using measurement y = {}'.format(measurement))
 
@@ -117,8 +117,11 @@ def subprocess(args):
 
     basedir = config.log.basedir
     basedir = os.path.join('exp', basedir)
+    os.makedirs(basedir, exist_ok=True)
     figsdir = os.path.join(basedir, 'figs')
+    os.makedirs(figsdir, exist_ok=True)
     ckptsdir = os.path.join(basedir, 'ckpts')
+    os.makedirs(ckptsdir, exist_ok=True)
 
     np_fig_path = os.path.join(figsdir, 'noisy_posterior.png')
     p_fig_path = os.path.join(figsdir, 'posterior.png')

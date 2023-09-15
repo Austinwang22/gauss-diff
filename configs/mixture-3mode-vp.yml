@@ -1,12 +1,8 @@
 data:
   dim: 2
-  mean: [[4.0, 4.0], [-4.0, 4.0], [0., 2.0], [5.0, 5.0]]
-  std: [[0.1, 0.], [0., 0.1]]
-  x_path: 'exp/mcmc-mixture-8196-vp/x.pt'
-  H: [1., 1.]
-  std_y: 0.1
   num_samples: 8196
-  y_index: 0
+  mean: [[4.0, 4.0], [-4.0, 4.0], [0., 0.]]
+  std: [[0.1, 0.], [0., 0.1]]
   type: 'mixture'
 
 model: 
@@ -17,7 +13,6 @@ model:
   beta_max: 20.
   num_scales: 1000
   sampling_eps: 0.001
-  ckpt_path: 'exp/mixture-8196-vp/ckpts/model-400.pt'
 
 train:
   batchsize: 128
@@ -25,6 +20,11 @@ train:
   continuous: True
   save_step: 50
   eval_step: 50
+
+optim:
+  lr: 0.0005
+  warmup: 5000
+  grad_clip: 1.
 
 sampling:
   method: 'pc'
@@ -35,11 +35,8 @@ sampling:
   noise_removal: True
   probability_flow: True
   eps: 0.001
-  num_samples: 1
-  beta: 0.1
-  N: 200
-  burn_in: 100
+  num_samples: 8196
 
 
 log:
-  basedir: mcmc-mixture-8196-vp
+  basedir: mixture-3mode-vp
