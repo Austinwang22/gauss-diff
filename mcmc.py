@@ -13,6 +13,7 @@ from utils.sde_lib import VPSDE, VESDE, EDMSDE
 from utils.helper import dict2namespace, save_ckpt
 from utils.datasets import Gaussian, GaussianMixture
 from matplotlib import pyplot as plt
+from plots import plot_data
 
 
 def observation(H, x, std_y=0.1):
@@ -129,25 +130,14 @@ def subprocess(args):
     np_ckpt_path = os.path.join(ckptsdir, 'noisy_posterior.pt')
     p_ckpt_path = os.path.join(ckptsdir, 'posterior_ckpt.pt')
 
-    plt.figure()
-    plt.scatter(posterior.cpu()[:, 0], posterior.cpu()[:, 1])
-    plt.title('Sampled Posterior Distribution\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]))
-    plt.savefig(p_fig_path)
-    plt.close()
+    plot_data([posterior], 'Sampled Posterior Distribution\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
+              p_fig_path)
 
-    plt.figure()
-    plt.scatter(latents[:, 0], latents[:, 1], c='blue')
-    plt.scatter(noisy_posterior.cpu()[:, 0], noisy_posterior.cpu()[:, 1], c='red')
-    plt.title('Noisy Posterior Latents (Red) and Diffusion Sampling Prior (Blue)')
-    plt.savefig(np_fig_path)
-    plt.close()
+    plot_data([latents, noisy_posterior], 'Noisy Posterior Latents (Red) and Diffusion Sampling Prior (Blue)', 
+              np_fig_path)
 
-    plt.figure()
-    plt.scatter(x.cpu()[:, 0], x.cpu()[:, 1], c='blue')
-    plt.scatter(posterior.cpu()[:, 0], posterior.cpu()[:, 1], c='red')
-    plt.title('Prior (Blue) + Sampled Posterior (Red)\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]))
-    plt.savefig(fig_path)
-    plt.close()
+    plot_data([x, posterior], 'Prior (Blue) + Sampled Posterior (Red)\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
+              fig_path)
 
     torch.save(noisy_posterior, np_ckpt_path)
     torch.save(posterior, p_ckpt_path)

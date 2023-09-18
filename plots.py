@@ -18,6 +18,15 @@ def plot(ts, samples, xlabel, ylabel, title='', savepath='exp/default/test.png')
     plt.savefig(savepath)
 
 
+def plot_data(data, title, save_path):
+    plt.figure()
+    plt.title(title)
+    for i in range(len(data)):
+        plt.scatter(data[i].cpu()[:, 0], data[i].cpu()[:, 1])
+    plt.savefig(save_path)
+    plt.close()
+
+
 def plot_samples(samples, data_samples, save_path, dim=2):
     if dim == 2:
         x_array = np.concatenate(
