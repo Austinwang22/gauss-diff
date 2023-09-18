@@ -12,7 +12,7 @@ Example (Samples from model):
 # Inverse Problems
 
 Given prior distribution on data **x** and forward operator **H** and measurement data _y_ = **Hx** + _z_, 
-where _z_ is Gaussian noise, we compute samples from the posterior distribution _p_(**x** | __y__).
+where _z_ is Gaussian noise, we compute samples from the posterior distribution _p_(**x** | _y_) with our pCN-Diffusion algorithm.
 
 ![Alt text](images/mcmc-mixture-3mode-vp/post_prior.png)
 

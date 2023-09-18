@@ -68,7 +68,6 @@ def pCN_sample(N, burn_in, sample_fn, device, model, start_x, y, H, std_y, beta)
                 posterior.append(curr_denoised)
     
     return torch.cat(noisy_posterior), torch.cat(posterior)
-        
 
 
 def subprocess(args):
