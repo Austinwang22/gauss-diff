@@ -12,7 +12,7 @@ from sampling import get_sampling_fn
 from utils.sde_lib import VPSDE, VESDE, EDMSDE
 from utils.helper import dict2namespace, save_ckpt
 from utils.datasets import Gaussian, GaussianMixture
-from plots import plot_samples
+from plots import plot_data
 from matplotlib import pyplot as plt
 
 
@@ -84,7 +84,6 @@ def train_fn(model, trainloader, optimizer, config, device):
         )
         if e % save_step == 0 and e > 0:
             ckpt_path = os.path.join(ckpt_dir, f'model-{e}.pt')
-            # save_ckpt(ckpt_path, model, optim=optimizer)
             torch.save(model.state_dict(), ckpt_path)
 
         if eval_step > 0 and e % eval_step == 0 and e > 0:
@@ -92,11 +91,7 @@ def train_fn(model, trainloader, optimizer, config, device):
             samples = samples.cpu().numpy()
             fig_path = os.path.join(fig_dir, f'{e}.png')
             print(fig_path)
-            # plot_samples(samples, data_samples, fig_path)
-            plt.figure()
-            plt.scatter(samples[:, 0], samples[:, 1])
-            plt.savefig(fig_path)
-            plt.close()
+            plot_data([samples], "", fig_path)
 
     data_path = os.path.join(fig_dir, 'data.png')
     plt.figure()

@@ -22,7 +22,7 @@ def plot_data(data, title, save_path):
     plt.figure()
     plt.title(title)
     for i in range(len(data)):
-        plt.scatter(data[i].cpu()[:, 0], data[i].cpu()[:, 1])
+        plt.scatter(data[i][:, 0], data[i][:, 1])
     plt.savefig(save_path)
     plt.close()
 

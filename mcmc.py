@@ -130,13 +130,13 @@ def subprocess(args):
     np_ckpt_path = os.path.join(ckptsdir, 'noisy_posterior.pt')
     p_ckpt_path = os.path.join(ckptsdir, 'posterior_ckpt.pt')
 
-    plot_data([posterior], 'Sampled Posterior Distribution\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
+    plot_data([posterior.cpu()], 'Sampled Posterior Distribution\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
               p_fig_path)
 
-    plot_data([latents, noisy_posterior], 'Noisy Posterior Latents (Red) and Diffusion Sampling Prior (Blue)', 
+    plot_data([latents.cpu(), noisy_posterior.cpu()], 'Noisy Posterior Latents (Red) and Diffusion Sampling Prior (Blue)', 
               np_fig_path)
 
-    plot_data([x, posterior], 'Prior (Blue) + Sampled Posterior (Red)\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
+    plot_data([x.cpu(), posterior.cpu()], 'Prior (Blue) + Sampled Posterior (Red)\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
               fig_path)
 
     torch.save(noisy_posterior, np_ckpt_path)

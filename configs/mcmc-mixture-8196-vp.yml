@@ -37,8 +37,8 @@ sampling:
   eps: 0.001
   num_samples: 1
   beta: 0.1
-  N: 10
-  burn_in: 5
+  N: 201
+  burn_in: 100
 
 
 log:
