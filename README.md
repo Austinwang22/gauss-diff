@@ -1,4 +1,4 @@
-Experiments with score-based generative models and Gaussian distributions.
+Experiments with score-based generative models and Gaussian distributions. Code partially based on [this repository](https://github.com/devzhk/InfSBM/tree/master).
 
 # Train 
 ```bash
