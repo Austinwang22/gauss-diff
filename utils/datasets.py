@@ -27,6 +27,8 @@ class GaussianMixture(Dataset):
         '''
         super().__init__()
         self.num_samples = num_samples
+        self.mean = mean
+        self.cov = std
         self.data = self.generate(num_samples, mean, std, prior)
 
     def __getitem__(self, index):

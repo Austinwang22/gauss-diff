@@ -6,7 +6,7 @@ data:
   H: [1., 1.]
   std_y: 0.1
   num_samples: 8196
-  y_index: 0
+  y: 0.
   type: 'mixture'
 
 model: 
@@ -39,6 +39,7 @@ sampling:
   beta: 0.1
   N: 201
   burn_in: 100
+  posterior_samples: 100
 
 
 log:

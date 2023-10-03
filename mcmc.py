@@ -14,6 +14,7 @@ from utils.helper import dict2namespace, save_ckpt
 from utils.datasets import Gaussian, GaussianMixture
 from matplotlib import pyplot as plt
 from plots import plot_data
+from utils.posterior import compute_posterior
 
 
 def observation(H, x, std_y=0.1):
@@ -82,10 +83,21 @@ def subprocess(args):
     print("Loading preset weights from {}".format(config.model.ckpt_path))
     model.load_state_dict(torch.load(config.model.ckpt_path))
 
+    mean = torch.tensor(config.data.mean, dtype=torch.float32)
+    std = torch.tensor(config.data.std, dtype=torch.float32)
+    type = config.data.type
+    
+    if type == 'gaussian':
+        prior = Gaussian(num_samples=config.data.num_samples,
+                        mean=mean, std=std)
+    elif type == 'mixture':
+        prior = GaussianMixture(num_samples=config.data.num_samples,
+                                mean=mean, std=std)
+
     x = torch.load(config.data.x_path).to(device)
     H = torch.tensor(config.data.H, device=device)
     std_y = config.data.std_y
-    y = observation(H, x, std_y=std_y)
+    y = config.data.y
 
     if config.model.sde == 'VP':
         sde = VPSDE()
@@ -108,12 +120,10 @@ def subprocess(args):
     N = config.sampling.N
     burn_in = config.sampling.burn_in
 
-    measurement = y[config.data.y_index]
-
-    print('Using measurement y = {}'.format(measurement))
+    print('Using measurement y = {}'.format(y))
 
     noisy_posterior, posterior = pCN_sample(N, burn_in, sample_fn, device, model, start_x, 
-                                            measurement, H, std_y, config.sampling.beta)
+                                            y, H, std_y, config.sampling.beta)
 
     basedir = config.log.basedir
     basedir = os.path.join('exp', basedir)
@@ -126,18 +136,24 @@ def subprocess(args):
     np_fig_path = os.path.join(figsdir, 'noisy_posterior.png')
     p_fig_path = os.path.join(figsdir, 'posterior.png')
     fig_path = os.path.join(figsdir, 'post_prior.png')
+    true_path = os.path.join(figsdir, 'true_posterior.png')
 
     np_ckpt_path = os.path.join(ckptsdir, 'noisy_posterior.pt')
     p_ckpt_path = os.path.join(ckptsdir, 'posterior_ckpt.pt')
 
-    plot_data([posterior.cpu()], 'Sampled Posterior Distribution\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
+    true_posterior = compute_posterior(prior, y, H, std_y, num_samples=config.sampling.posterior_samples)
+
+    plot_data([posterior.cpu()], 'Sampled Posterior Distribution\ny: {} H: [{}, {}]'.format(y, H[0], H[1]), 
               p_fig_path)
 
     plot_data([latents.cpu(), noisy_posterior.cpu()], 'Noisy Posterior Latents (Red) and Diffusion Sampling Prior (Blue)', 
               np_fig_path)
 
-    plot_data([x.cpu(), posterior.cpu()], 'Prior (Blue) + Sampled Posterior (Red)\ny: {} H: [{}, {}]'.format(measurement, H[0], H[1]), 
+    plot_data([x.cpu(), posterior.cpu()], 'Prior (Blue) + Sampled Posterior (Red)\ny: {} H: [{}, {}]'.format(y, H[0], H[1]), 
               fig_path)
+    
+    plot_data([x.cpu(), true_posterior.data.cpu(), posterior.cpu()], 
+              'True Posterior (Orange) + Sampled Posterior (Green) + Prior (Blue)', true_path)
 
     torch.save(noisy_posterior, np_ckpt_path)
     torch.save(posterior, p_ckpt_path)

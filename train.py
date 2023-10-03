@@ -94,10 +94,7 @@ def train_fn(model, trainloader, optimizer, config, device):
             plot_data([samples], "", fig_path)
 
     data_path = os.path.join(fig_dir, 'data.png')
-    plt.figure()
-    plt.scatter(data_samples[:, 0], data_samples[:, 1])
-    plt.savefig(data_path)
-    plt.close()
+    plot_data([data_samples], 'True Distribution', data_path)
             
     print('Finish training')
 
