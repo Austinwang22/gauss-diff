@@ -18,11 +18,14 @@ def plot(ts, samples, xlabel, ylabel, title='', savepath='exp/default/test.png')
     plt.savefig(savepath)
 
 
-def plot_data(data, title, save_path):
+def plot_data(data, title, save_path, markers=None):
     plt.figure()
     plt.title(title)
     for i in range(len(data)):
-        plt.scatter(data[i][:, 0], data[i][:, 1])
+        if markers == None:
+            plt.scatter(data[i][:, 0], data[i][:, 1])
+        else:
+            plt.scatter(data[i][:, 0], data[i][:, 1], marker=markers[i])
     plt.savefig(save_path)
     plt.close()
 

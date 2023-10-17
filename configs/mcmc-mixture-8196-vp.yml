@@ -37,9 +37,9 @@ sampling:
   eps: 0.001
   num_samples: 1
   beta: 0.1
-  N: 201
+  N: 401
   burn_in: 100
-  posterior_samples: 100
+  posterior_samples: 300
 
 
 log:

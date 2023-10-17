@@ -48,7 +48,7 @@ def compute_weights(y, mean, cov, H, std_y):
 
 
 
-mean = torch.tensor([[4.0, 4.0], [-4.0, 4.0], [-2.0, 2.0], [5.0, 5.0]])
+mean = torch.tensor([[4.0, 4.0], [-4.0, 4.0], [0., 0.]])
 cov = torch.eye(2) * 0.1
 
 mix = GaussianMixture(1000, mean, cov)

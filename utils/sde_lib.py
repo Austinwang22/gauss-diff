@@ -208,7 +208,7 @@ class subVPSDE(SDE):
 
 
 class VESDE(SDE):
-    def __init__(self, sigma_min=0.01, sigma_max=50, N=1000):
+    def __init__(self, sigma_min=0.02, sigma_max=100, N=1000):
         """Construct a Variance Exploding SDE.
         Args:
           sigma_min: smallest sigma.

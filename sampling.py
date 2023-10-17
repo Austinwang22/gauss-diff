@@ -90,6 +90,21 @@ def get_sampling_fn(config, sde, shape, inverse_scaler, eps, device):
                                      denoise=config.sampling.noise_removal,
                                      eps=eps,
                                      device=device)
+    elif sampler_name.lower() == 'pigdm':
+        predictor = get_predictor(config.sampling.predictor.lower())
+        corrector = get_corrector(config.sampling.corrector.lower())
+        sampling_fn = get_pigdm_sampler(sde=sde,
+                                        shape=shape,
+                                        predictor=predictor,
+                                        corrector=corrector,
+                                        inverse_scaler=inverse_scaler,
+                                        snr=config.sampling.snr,
+                                        n_steps=config.sampling.n_steps_each,
+                                        probability_flow=config.sampling.probability_flow,
+                                        continuous=config.train.continuous,
+                                        denoise=config.sampling.noise_removal,
+                                        eps=eps,
+                                        device=device)
     else:
         raise ValueError(f"Sampler name {sampler_name} unknown.")
 
@@ -330,6 +345,63 @@ def shared_corrector_update_fn(x, t, sde, model, corrector, continuous, snr, n_s
     else:
         corrector_obj = corrector(sde, score_fn, snr, n_steps)
     return corrector_obj.update_fn(x, t)
+
+
+def get_pigdm_sampler(sde, shape, predictor, corrector, inverse_scaler, snr,
+                      n_steps=1, probability_flow=False, continuous=False,
+                      denoise=True, eps=1e-3, device='cuda'):
+
+    predictor_update_fn = functools.partial(shared_predictor_update_fn,
+                                            sde=sde,
+                                            predictor=predictor,
+                                            probability_flow=probability_flow,
+                                            continuous=continuous)
+    corrector_update_fn = functools.partial(shared_corrector_update_fn,
+                                            sde=sde,
+                                            corrector=corrector,
+                                            continuous=continuous,
+                                            snr=snr,
+                                            n_steps=n_steps)
+    
+    def approximate_grad_score(sde, score_fn, x, y, H, std_y, t, device='cuda'):
+
+        sigma_t = sde.marginal_prob(x, t)[1]
+        r_t = torch.sqrt(torch.tensor((sigma_t ** 2) / (sigma_t ** 2 + 1))).to(device)
+        vec_t = torch.ones(x.shape[0], device=device) * t
+        hat_x = x + sigma_t * sigma_t * score_fn(x, vec_t)
+
+        H = torch.reshape(H, (1, 2))
+        
+        Hx = torch.matmul(H, hat_x.T)
+        vec1 = torch.reshape((y - Hx).T, (x.shape[0], 1))
+        val2 = 1. / (r_t * r_t * torch.matmul(H, H.T) + std_y * std_y)
+        vec1 = vec1 * val2
+        vec3 = torch.matmul(vec1, H)
+
+        mat = (vec3.detach() * hat_x).sum()
+        guidance = r_t * r_t * torch.autograd.grad(mat, x)[0]
+        return guidance
+    
+    def pigdm_sampler(model, y, H, std_y, start_x=None, eta=1.):
+        if start_x == None:
+            x = sde.prior_sampling(shape).to(device)
+        else:
+            x = start_x.to(device)
+        timesteps = torch.linspace(sde.T, eps, sde.N, device=device)
+
+        x.requires_grad = True
+
+        score_fn = mutils.get_score_fn(sde, model, continuous=continuous)
+
+        for i in range(sde.N):
+            t = timesteps[i]
+            vec_t = torch.ones(shape[0], device=t.device) * t
+            x, x_mean = predictor_update_fn(x, vec_t, model=model)
+            x += approximate_grad_score(sde, score_fn, x, y, H, std_y, t, device=device)
+
+        return inverse_scaler(x_mean if denoise else x)
+
+    return pigdm_sampler
 
 
 def get_pc_sampler(sde, shape, predictor, corrector, inverse_scaler, snr,

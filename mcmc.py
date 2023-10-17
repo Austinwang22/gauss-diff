@@ -146,14 +146,16 @@ def subprocess(args):
     plot_data([posterior.cpu()], 'Sampled Posterior Distribution\ny: {} H: [{}, {}]'.format(y, H[0], H[1]), 
               p_fig_path)
 
+    markers = ["o", "v"]
     plot_data([latents.cpu(), noisy_posterior.cpu()], 'Noisy Posterior Latents (Red) and Diffusion Sampling Prior (Blue)', 
-              np_fig_path)
+              np_fig_path, markers=markers)
 
     plot_data([x.cpu(), posterior.cpu()], 'Prior (Blue) + Sampled Posterior (Red)\ny: {} H: [{}, {}]'.format(y, H[0], H[1]), 
-              fig_path)
+              fig_path, markers=markers)
     
+    markers = [".", "v", "+"]
     plot_data([x.cpu(), true_posterior.data.cpu(), posterior.cpu()], 
-              'True Posterior (Orange) + Sampled Posterior (Green) + Prior (Blue)', true_path)
+              'True Posterior (Orange) + Sampled Posterior (Green) + Prior (Blue)', true_path, markers=markers)
 
     torch.save(noisy_posterior, np_ckpt_path)
     torch.save(posterior, p_ckpt_path)

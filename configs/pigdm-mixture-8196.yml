@@ -1,8 +1,8 @@
 data:
   dim: 2
-  mean: [[4.0, 4.0], [-4.0, 4.0], [0., 0.]]
+  mean: [[4.0, 4.0], [-4.0, 4.0], [0., 2.0], [5.0, 5.0]]
   std: [[0.1, 0.], [0., 0.1]]
-  x_path: 'exp/mcmc-mixture-3mode-vp/x.pt'
+  x_path: 'exp/mcmc-mixture-8196-vp/x.pt'
   H: [1., 1.]
   std_y: 0.1
   num_samples: 8196
@@ -10,14 +10,14 @@ data:
   type: 'mixture'
 
 model: 
-  sde: VP
+  sde: VE
   layers: [3, 256, 256, 256, 256, 2]
   act: lrelu
   beta_min: 0.1
   beta_max: 20.
   num_scales: 1000
   sampling_eps: 0.001
-  ckpt_path: 'exp/mixture-3mode-vp/ckpts/model-400.pt'
+  ckpt_path: 'exp/mixture-8196-ve/ckpts/model-400.pt'
 
 train:
   batchsize: 128
@@ -27,20 +27,17 @@ train:
   eval_step: 50
 
 sampling:
-  method: 'pc'
+  method: 'pigdm'
   predictor: 'euler_maruyama'
   corrector: 'none'
   snr: 0.16
   n_steps_each: 1
   noise_removal: True
-  probability_flow: True
+  probability_flow: False
   eps: 0.001
-  num_samples: 1
-  beta: 0.85
-  N: 401
-  burn_in: 100
-  posterior_samples: 300
+  num_samples: 1000
+  posterior_samples: 1000
 
 
 log:
-  basedir: mcmc-mixture-3mode-vp
+  basedir: pigdm-mixture-8196-ve
