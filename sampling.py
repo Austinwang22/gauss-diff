@@ -1,5 +1,6 @@
 """Various sampling methods."""
 import functools
+import os
 
 import torch
 import numpy as np
@@ -7,6 +8,7 @@ import abc
 
 from utils import sde_lib
 from models import utils as mutils
+from utils import pigdm_approximations
 
 _CORRECTORS = {}
 _PREDICTORS = {}
@@ -382,7 +384,7 @@ def get_pigdm_sampler(sde, shape, predictor, corrector, inverse_scaler, snr,
         guidance = r_t * r_t * torch.autograd.grad(mat, x)[0]
         return guidance
     
-    def pigdm_sampler(model, y, H, std_y, start_x=None, eta=1.):
+    def pigdm_sampler(model, y, H, std_y, prior=None, start_x=None, eta=1., out_dir=None):
         if start_x == None:
             x = sde.prior_sampling(shape).to(device)
         else:
@@ -393,8 +395,17 @@ def get_pigdm_sampler(sde, shape, predictor, corrector, inverse_scaler, snr,
 
         score_fn = mutils.get_score_fn(sde, model, continuous=continuous)
 
+        approx_timesteps = torch.linspace(sde.T, eps, 10, device=device)
+        print(approx_timesteps)
+
         for i in range(sde.N):
             t = timesteps[i]
+            if t in approx_timesteps and prior != None:
+                approx = 'approx{}.png'.format(t)
+                true = 'true{}.png'.format(t)
+                approx_path = os.path.join(out_dir, approx)
+                true_path = os.path.join(out_dir, true)
+                pigdm_approximations.compare(sde, model, x[0], t, shape[0], device, prior, approx_path, true_path)
             vec_t = torch.ones(shape[0], device=t.device) * t
             x, x_mean = predictor_update_fn(x, vec_t, model=model)
             x += approximate_grad_score(sde, score_fn, x, y, H, std_y, t, device=device)

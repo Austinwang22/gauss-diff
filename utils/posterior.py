@@ -22,7 +22,7 @@ def compute_posterior(prior, y, H, std_y, num_samples=1000):
     new_mean = torch.stack(new_mean, dim=0)
     weights = compute_weights(y, mean, cov, H, std_y)
     
-    posterior = GaussianMixture(num_samples, new_mean, cov, prior=weights)
+    posterior = GaussianMixture(num_samples, new_mean, new_cov, prior=weights)
     return posterior
 
 
@@ -47,15 +47,14 @@ def compute_weights(y, mean, cov, H, std_y):
     return weights
 
 
+# mean = torch.tensor([[4.0, 4.0], [-4.0, 4.0], [0., 0.]])
+# cov = torch.eye(2) * 0.1
 
-mean = torch.tensor([[4.0, 4.0], [-4.0, 4.0], [0., 0.]])
-cov = torch.eye(2) * 0.1
+# mix = GaussianMixture(1000, mean, cov)
 
-mix = GaussianMixture(1000, mean, cov)
+# H = torch.tensor([1., 1.])
 
-H = torch.tensor([1., 1.])
+# posterior = compute_posterior(mix, 0, H, 0.1)
 
-posterior = compute_posterior(mix, 0, H, 0.1)
-
-plt.scatter(posterior.data[:, 0], posterior.data[:, 1])
-plt.savefig('test.png')
+# plt.scatter(posterior.data[:, 0], posterior.data[:, 1])
+# plt.savefig('test.png')
